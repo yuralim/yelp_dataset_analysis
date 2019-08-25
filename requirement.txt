@@ -1,0 +1,6 @@
+pandas
+pyspark
+nltk
+psycopg2
+configparser
+boto3
