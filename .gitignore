@@ -105,6 +105,8 @@ venv.bak/
 
 # Configuration
 .aws/
+export_env_variables.sh
+config.cfg
 
 # Data
 yelp_dataset_sample/
