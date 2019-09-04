@@ -107,9 +107,13 @@ venv.bak/
 .aws/
 export_env_variables.sh
 config.cfg
+airflow_variables.json
 
 # Data
 yelp_dataset_sample/
 yelp_dataset/
+
+# Airflow logs
+airflow/logs
 
 
