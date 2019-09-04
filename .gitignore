@@ -110,5 +110,6 @@ config.cfg
 
 # Data
 yelp_dataset_sample/
+yelp_dataset/
 
 
