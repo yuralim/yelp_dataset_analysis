@@ -28,6 +28,10 @@ def subdag(
     )
 
     def get_current_process_file(**kwargs):
+        """
+        Check the previous run from script_log table and 
+        Figure out a file name to process in this run
+        """
         print(f"Check the previous script run for script: {script_name}")
         redshift = PostgresHook(postgres_conn_id=redshift_conn_id)
 
@@ -46,6 +50,9 @@ def subdag(
         return current_process_file
     
     def build_file_name(**kwargs):
+        """
+        Build the full file path in S3 using variables from Airflow DB
+        """
         ti = kwargs['ti']
 
         current_process_file = ti.xcom_pull(task_ids=f"{child_dag_name}.task_get_current_process_file")
@@ -58,6 +65,10 @@ def subdag(
         return file_name
 
     def check_s3_file(**kwargs):
+        """
+        Check the file to process in this run is a valid file in S3.
+        If the file doesn't exists, the downstream tasks are will be skipped.
+        """
         ti = kwargs['ti']
         file_name = ti.xcom_pull(task_ids=f"{child_dag_name}.task_build_file_name")
 
@@ -68,6 +79,10 @@ def subdag(
         return isValidFile
     
     def transform_s3_to_parquet(**kwargs):
+        """
+        Submit a pyspark script to read/transform S3 files and 
+        write parquets in the temp S3 bucket.
+        """
         ti = kwargs['ti']
         file_name = ti.xcom_pull(task_ids=f"{child_dag_name}.task_build_file_name")
         cluster_dns = Variable.get('SPARK_MASTER_DNS')
@@ -86,6 +101,9 @@ def subdag(
             emr.kill_spark_session(session_url)
     
     def copy_parquet_to_redshift(table_name, **kwargs):
+        """
+        Copy data to Redshift from temp parquet files in S3
+        """
         s3_credential = S3Hook(s3_conn_id).get_credentials()
 
         print(f"Load {table_name}.parquet to Redshift")
@@ -102,6 +120,10 @@ def subdag(
         PostgresHook(redshift_conn_id).run(copy_sql)
 
     def insert_script_log(**kwargs):
+        """
+        Write logs about which file is processed in this run 
+        to avoid processing the same file again.
+        """
         ti = kwargs['ti']
 
         processed_file = ti.xcom_pull(task_ids=f"{child_dag_name}.task_get_current_process_file")
