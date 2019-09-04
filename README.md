@@ -10,7 +10,7 @@ This project contains two ETL processes. These two ETL do exaclty same thing, bu
 
 ## ETL process
 
-![ETL Diagram](etl_diagram.png)
+![ETL Diagram](etl_diagram2.png)
 
 This ETL follows the follow steps.
 
