@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/bash +xe
+
+source export_env_variables.sh
 
 aws redshift create-cluster \
 --cluster-identifier redshift-cluster \
